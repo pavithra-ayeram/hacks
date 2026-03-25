@@ -1,0 +1,70 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "email": "janedoe@gmail.com",
+      "password": "janejane",
+      "username": "Jane Doe",
+      "points": 100,
+      "reputation": 5,
+      "bribesLeft": 3,
+      "sideQuestsLeft": 3,
+      "lastLogin": "2026-03-25T22:05:26.816Z"
+    },
+    {
+      "id": "2",
+      "email": "bob@gmail.com",
+      "password": "123",
+      "username": "Bob Smith",
+      "points": 80,
+      "reputation": 4,
+      "bribesLeft": 2,
+      "sideQuestsLeft": 1,
+      "lastLogin": "2026-03-24T10:00:00Z"
+    }
+  ],
+  "habits": [
+    {
+      "id": "h1",
+      "userId": "1",
+      "name": "Drink water",
+      "done": false
+    }
+  ],
+  "friends": [
+    {
+      "id": "c1",
+      "userId": "1",
+      "friendId": "2",
+      "betsCompleted": 0,
+      "betsTogether": 5
+    },
+    {
+      "id": "c2",
+      "userId": "2",
+      "friendId": "1",
+      "betsCompleted": 0,
+      "betsTogether": 5
+    }
+  ],
+  "ghosts": [
+    {
+      "id": "g1",
+      "userId": "1",
+      "habitId": "h1",
+      "isActive": false,
+      "missedDays": 0,
+      "last_updated": "2026-03-25T00:00:00Z"
+    }
+  ],
+  "sidequests": [
+    {
+      "id": "s1",
+      "userId": "1",
+      "betId": "b1",
+      "task": "Walk 500 steps",
+      "usedAt": "2026-03-25T00:00:00Z"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
