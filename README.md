@@ -1,5 +1,5 @@
 # Habo Space
----
+
 *“Habits don’t form in 21 days. They form when your system makes failure impossible to ignore.”*
 
 **Habo Space** is a group-first, socially aware habit-building platform that transforms habits from private checklists into shared, emotionally engaging experiences.
