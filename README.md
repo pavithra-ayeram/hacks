@@ -17,14 +17,13 @@ Unlike traditional habit trackers that rely on streaks and self-discipline, Haun
 ### Prerequisites
 Make sure you have:
 - Node.js (v18+ recommended)
-- npm or yarn
+- npm
 - Git
-- MongoDB (local or cloud like Atlas) OR Firebase setup
 
 #### Clone the repository
 ```
 git clone https://github.com/pavithra-ayeram/hacks.git
-cd haunt
+cd hacks
 ```
 
 #### Project Structure
