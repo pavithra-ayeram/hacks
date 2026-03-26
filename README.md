@@ -41,7 +41,9 @@ npm install
 ```
 
 #### Run the application
-```npm run dev```
+```
+npm run dev
+```
 
 #### Test the server
 - Open browser -> `http://localhost:5173`
