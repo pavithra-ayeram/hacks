@@ -1,40 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Zap, Trophy, Plus } from "lucide-react";
-
-const INITIAL_QUESTS = [
-  {
-    title: "7-Day Reading Challenge",
-    date: "Mar 10 – Mar 16",
-    xp: "+50 XP",
-    brownie: "+200",
-    achievements: ["Bookworm", "7-Day Streak"],
-    summary: "Read 30 mins every day for a week.",
-  },
-  {
-    title: "Morning Walk Sprint",
-    date: "Feb 22 – Feb 28",
-    xp: "+40 XP",
-    brownie: "+150",
-    achievements: ["Early Bird", "Step Master"],
-    summary: "Walked 5,000 steps before 8am for 6 days straight.",
-  },
-  {
-    title: "No-Sugar Week",
-    date: "Feb 1 – Feb 7",
-    xp: "+60 XP",
-    brownie: "+250",
-    achievements: ["Clean Eater", "Iron Will"],
-    summary: "Avoided added sugar for 7 days.",
-  },
-];
+import initialQuests from "../data/sidequests.json";
+import AddSidequestModal from "../components/AddSidequestModal";
 
 export default function SidequestsScreen({ onBack }: { onBack: () => void }) {
-  const [quests, setQuests] = useState(INITIAL_QUESTS);
+  const [quests, setQuests] = useState(initialQuests);
+  const [showModal, setShowModal] = useState(false);
 
-  const handleAdd = () => {
-    const title = prompt("Name your sidequest:");
-    if (!title) return;
-    setQuests([{ title, date: "Just started", xp: "+? XP", brownie: "+?", achievements: [], summary: "In progress…" }, ...quests]);
+  // Load from localStorage on mount, fallback to initial data
+  useEffect(() => {
+    const stored = localStorage.getItem("sidequests");
+    if (stored) {
+      try {
+        setQuests(JSON.parse(stored));
+      } catch (e) {
+        console.error("Failed to load sidequests from localStorage", e);
+      }
+    }
+  }, []);
+
+  // Save to localStorage whenever quests change
+  useEffect(() => {
+    localStorage.setItem("sidequests", JSON.stringify(quests));
+  }, [quests]);
+
+  const handleAdd = (newQuestData: {
+    title: string;
+    xp: string;
+    brownie: string;
+    achievements: string[];
+    summary: string;
+  }) => {
+    const newQuest = {
+      id: Math.max(...quests.map((q) => q.id), 0) + 1,
+      date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      ...newQuestData,
+    };
+    setQuests([newQuest, ...quests]);
+    setShowModal(false);
   };
 
   return (
@@ -44,7 +47,7 @@ export default function SidequestsScreen({ onBack }: { onBack: () => void }) {
         <div style={topBar}>
           <button onClick={onBack} style={iconBtn}><ArrowLeft size={16} /></button>
           <h1 style={heading}>Sidequests</h1>
-          <button onClick={handleAdd} style={addBtn}><Plus size={14} /> New Sidequest</button>
+          <button onClick={() => setShowModal(true)} style={addBtn}><Plus size={14} /> New Sidequest</button>
         </div>
 
         <p style={{ color: "#a8a6a2", fontSize: 14, marginBottom: 32 }}>Bonus missions. 3 compensations per month.</p>
@@ -77,6 +80,8 @@ export default function SidequestsScreen({ onBack }: { onBack: () => void }) {
           ))}
         </div>
       </div>
+
+      {showModal && <AddSidequestModal onAdd={handleAdd} onClose={() => setShowModal(false)} />}
     </div>
   );
 }

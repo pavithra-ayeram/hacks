@@ -1,0 +1,80 @@
+[
+  {
+    "id": "bet-001",
+    "title": "Run 5 days straight",
+    "activity": "Go for a 30-min run",
+    "opponent": "Priya",
+    "stake": "200 pts",
+    "status": "accepted",
+    "frequency": "daily",
+    "startDate": "2026-03-20",
+    "endDate": "2026-03-25",
+    "linkedSidequests": [
+      "sidequest-gym-routine",
+      "sidequest-morning-run",
+      "sidequest-cardio-challenge"
+    ],
+    "logsThisMonth": [
+      {
+        "date": "2026-03-20",
+        "verificationStatus": "approved",
+        "verifiedBy": "Priya"
+      },
+      {
+        "date": "2026-03-21",
+        "verificationStatus": "pending",
+        "verifiedBy": null
+      }
+    ]
+  },
+  {
+    "id": "bet-002",
+    "title": "Skip yoga this week?",
+    "activity": "Complete yoga session",
+    "opponent": "Arjun",
+    "stake": "150 pts",
+    "status": "pending",
+    "frequency": "weekly",
+    "startDate": "2026-03-23",
+    "endDate": "2026-03-30",
+    "linkedSidequests": [
+      "sidequest-yoga-flow",
+      "sidequest-morning-stretch",
+      "sidequest-flexibility-challenge"
+    ],
+    "logsThisMonth": []
+  },
+  {
+    "id": "bet-003",
+    "title": "No-screen mornings",
+    "activity": "Stay off screens until 9 AM",
+    "opponent": "Karthik",
+    "stake": "300 pts",
+    "status": "completed",
+    "frequency": "daily",
+    "startDate": "2026-03-15",
+    "endDate": "2026-03-22",
+    "linkedSidequests": [
+      "sidequest-morning-routine",
+      "sidequest-meditation",
+      "sidequest-digital-detox"
+    ],
+    "logsThisMonth": [
+      {
+        "date": "2026-03-15",
+        "verificationStatus": "approved",
+        "verifiedBy": "Karthik"
+      },
+      {
+        "date": "2026-03-16",
+        "verificationStatus": "approved",
+        "verifiedBy": "Karthik"
+      },
+      {
+        "date": "2026-03-17",
+        "verificationStatus": "approved",
+        "verifiedBy": "Karthik"
+      }
+    ]
+  }
+]

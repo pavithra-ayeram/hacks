@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
+export default function LoginScreen({ onLogin }: { onLogin: (userId: string) => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [focused, setFocused] = useState<string | null>(null);
@@ -158,7 +158,7 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
 
             {/* Continue button */}
             <button
-              onClick={onLogin}
+              onClick={() => onLogin(email.toLowerCase().trim())}
               disabled={!canContinue}
               style={{
                 width: "100%",
@@ -195,7 +195,7 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
 
           {/* Guest shortcut */}
           <button
-            onClick={onLogin}
+            onClick={() => onLogin("guest")}
             style={{
               width: "100%",
               padding: "14px",

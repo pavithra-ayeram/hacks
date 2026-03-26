@@ -1,16 +1,13 @@
 import { useState, useEffect } from "react";
 import { Zap, Target, ArrowLeft, CheckCircle, XCircle, Plus, Trash2, Star } from "lucide-react";
+import initialQuests from "../data/sidequests.json";
+import AddSidequestModal from "../components/AddSidequestModal";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────────────────────────────────────
-type Quest = { id: number; title: string; date: string; xp: string; achievements: string[] };
+type Quest = { id: number; title: string; date: string; xp: string; brownie: string; achievements: string[]; summary: string };
 type Bet   = { id: number; title: string; with: string; myDone: boolean; theirDone: boolean; reward: string };
-
-const INIT_QUESTS: Quest[] = [
-  { id: 1, title: "7-Day Reading Challenge", date: "Mar 10–16", xp: "+50 XP", achievements: ["📚 Bookworm", "🔥 Streak"] },
-  { id: 2, title: "Morning Walk Sprint",     date: "Feb 22–28", xp: "+40 XP", achievements: ["🌅 Early Bird"] },
-];
 
 const INIT_BETS: Bet[] = [
   { id: 1, title: "Run 1km today",    with: "Arjun", myDone: false, theirDone: true,  reward: "+1 Rep · +10 🍪" },
@@ -237,61 +234,93 @@ function PanelSheet({ title, emoji, onClose, children }: {
 // Sidequests Panel
 // ─────────────────────────────────────────────────────────────────────────────
 function SidequestsPanel({ onClose }: { onClose: () => void }) {
-  const [quests, setQuests] = useState<Quest[]>(INIT_QUESTS);
+  const [quests, setQuests] = useState<Quest[]>(initialQuests);
   const [confirmId, setConfirmId] = useState<number | null>(null);
-  const [nextId, setNextId] = useState(50);
+  const [showModal, setShowModal] = useState(false);
 
-  const addQuest = () => {
-    const title = prompt("Name your sidequest:");
-    if (!title?.trim()) return;
-    setQuests(prev => [{
-      id: nextId, title: title.trim(), date: "Just started", xp: "+? XP", achievements: [],
-    }, ...prev]);
-    setNextId(n => n + 1);
+  // Load from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem("sidequests");
+    if (stored) {
+      try {
+        setQuests(JSON.parse(stored));
+      } catch (e) {
+        console.error("Failed to load sidequests from localStorage", e);
+      }
+    }
+  }, []);
+
+  // Save to localStorage whenever quests change
+  useEffect(() => {
+    localStorage.setItem("sidequests", JSON.stringify(quests));
+  }, [quests]);
+
+  const addQuest = (newQuestData: {
+    title: string;
+    xp: string;
+    brownie: string;
+    achievements: string[];
+    summary: string;
+  }) => {
+    const newQuest: Quest = {
+      id: Math.max(...quests.map((q) => q.id), 0) + 1,
+      date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      ...newQuestData,
+    };
+    setQuests(prev => [newQuest, ...prev]);
+    setShowModal(false);
   };
 
-  const deleteQuest = (id: number) => { setQuests(prev => prev.filter(q => q.id !== id)); setConfirmId(null); };
+  const deleteQuest = (id: number) => { 
+    setQuests(prev => prev.filter(q => q.id !== id)); 
+    setConfirmId(null); 
+  };
 
   return (
-    <PanelSheet title="Sidequests" emoji="⚡" onClose={onClose}>
-      <button style={panelAddBtn} onClick={addQuest}><Plus size={14} /> New Sidequest</button>
+    <>
+      <PanelSheet title="Sidequests" emoji="⚡" onClose={onClose}>
+        <button style={panelAddBtn} onClick={() => setShowModal(true)}><Plus size={14} /> New Sidequest</button>
 
-      {quests.length === 0 && <EmptyMsg text="No sidequests yet!" />}
+        {quests.length === 0 && <EmptyMsg text="No sidequests yet!" />}
 
-      {quests.map(q => (
-        <div key={q.id} style={panelCard}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-            <div style={{ flex: 1 }}>
-              <div style={panelCardTitle}>{q.title}</div>
-              <div style={panelCardSub}>{q.date} · <span style={{ color: "#7c9a7e" }}>{q.xp}</span></div>
-              {q.achievements.length > 0 && (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginTop: "8px" }}>
-                  {q.achievements.map((a, i) => (
-                    <span key={i} style={achieveChip}>{a}</span>
-                  ))}
-                </div>
-              )}
-            </div>
-            <button onClick={() => setConfirmId(q.id)} style={trashBtnStyle}><Trash2 size={13} /></button>
-          </div>
-        </div>
-      ))}
-
-      {/* Confirm delete */}
-      {confirmId !== null && (
-        <div style={miniOverlay} onClick={() => setConfirmId(null)}>
-          <div style={miniSheet} onClick={e => e.stopPropagation()}>
-            <div style={{ fontSize: "28px", textAlign: "center", marginBottom: "10px" }}>🗑️</div>
-            <p style={{ color: "#f1efe9", fontWeight: 600, textAlign: "center", fontFamily: "Georgia, serif", fontSize: "16px", margin: "0 0 6px" }}>Delete Sidequest?</p>
-            <p style={{ color: "#a8a6a2", fontSize: "12px", textAlign: "center", margin: "0 0 18px" }}>This can't be undone.</p>
-            <div style={{ display: "flex", gap: "8px" }}>
-              <button onClick={() => setConfirmId(null)} style={cancelBtnStyle}>Cancel</button>
-              <button onClick={() => deleteQuest(confirmId)} style={deleteBtnStyle}>Delete</button>
+        {quests.map(q => (
+          <div key={q.id} style={panelCard}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div style={{ flex: 1 }}>
+                <div style={panelCardTitle}>{q.title}</div>
+                <div style={panelCardSub}>{q.date} · <span style={{ color: "#7c9a7e" }}>{q.xp}</span> · <span style={{ color: "#c4855a" }}>{q.brownie}</span></div>
+                <div style={{ fontSize: "12px", color: "#a8a6a2", margin: "6px 0" }}>{q.summary}</div>
+                {q.achievements.length > 0 && (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginTop: "8px" }}>
+                    {q.achievements.map((a, i) => (
+                      <span key={i} style={achieveChip}>{a}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <button onClick={() => setConfirmId(q.id)} style={trashBtnStyle}><Trash2 size={13} /></button>
             </div>
           </div>
-        </div>
-      )}
-    </PanelSheet>
+        ))}
+
+        {/* Confirm delete */}
+        {confirmId !== null && (
+          <div style={miniOverlay} onClick={() => setConfirmId(null)}>
+            <div style={miniSheet} onClick={e => e.stopPropagation()}>
+              <div style={{ fontSize: "28px", textAlign: "center", marginBottom: "10px" }}>🗑️</div>
+              <p style={{ color: "#f1efe9", fontWeight: 600, textAlign: "center", fontFamily: "Georgia, serif", fontSize: "16px", margin: "0 0 6px" }}>Delete Sidequest?</p>
+              <p style={{ color: "#a8a6a2", fontSize: "12px", textAlign: "center", margin: "0 0 18px" }}>This can't be undone.</p>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button onClick={() => setConfirmId(null)} style={cancelBtnStyle}>Cancel</button>
+                <button onClick={() => deleteQuest(confirmId)} style={deleteBtnStyle}>Delete</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </PanelSheet>
+
+      {showModal && <AddSidequestModal onAdd={addQuest} onClose={() => setShowModal(false)} />}
+    </>
   );
 }
 

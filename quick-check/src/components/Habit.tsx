@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 function Habit({ name }: { name: string }) {
   const [cells, setCells] = useState(Array(28).fill(false));
 
@@ -14,7 +16,7 @@ function Habit({ name }: { name: string }) {
       </div>
 
       <div className="grid">
-        {cells.map((c, i) => (
+        {cells.map((c: boolean, i: number) => (
           <div
             key={i}
             className={`cell ${c ? "active" : ""}`}
@@ -29,3 +31,5 @@ function Habit({ name }: { name: string }) {
     </div>
   );
 }
+
+export default Habit;

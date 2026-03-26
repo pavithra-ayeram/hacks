@@ -11,6 +11,7 @@ import ProfileScreen from "./screens/Profiles";
 
 import MinimalNav from "./screens/MinimalNav";
 import GamifiedNav from "./screens/GamifiedNav";
+import { useNotifications } from "./hooks/useNotifications";
 
 export type Habit = { id: number; name: string; done: boolean };
 
@@ -30,6 +31,7 @@ export type Screen =
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>("login");
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
 
   const [nextId, setNextId] = useState(4);
 
@@ -38,6 +40,8 @@ export default function App() {
     { id: 2, name: "Move your body", done: false },
     { id: 3, name: "Read", done: false },
   ]);
+
+  const notifications = useNotifications();
 
   // 🔹 Debug (remove later)
   console.log("SCREEN:", screen);
@@ -88,7 +92,10 @@ export default function App() {
     >
       {/* ───────── LOGIN ───────── */}
       {screen === "login" && (
-        <LoginScreen onLogin={() => setScreen("choose")} />
+        <LoginScreen onLogin={(userId) => {
+          setCurrentUser(userId);
+          setScreen("choose");
+        }} />
       )}
 
       {/* ───────── CHOOSE ───────── */}
@@ -135,6 +142,7 @@ export default function App() {
       {screen === "minimal-bets" && (
         <BetsScreen
           onBack={() => setScreen("minimal-home")}
+          onAddNotification={notifications.addNotification}
         />
       )}
 
@@ -170,6 +178,7 @@ export default function App() {
       {screen === "gamified-bets" && (
         <BetsScreen
           onBack={() => setScreen("gamified-home")}
+          onAddNotification={notifications.addNotification}
         />
       )}
 
@@ -186,7 +195,13 @@ export default function App() {
       )}
 
       {isGamified && (
-        <GamifiedNav screen={screen} setScreen={setScreen} />
+        <GamifiedNav
+          screen={screen}
+          setScreen={setScreen}
+          notifications={notifications.notifications}
+          onApproveNotif={notifications.approveNotification}
+          onRejectNotif={notifications.rejectNotification}
+        />
       )}
     </div>
   );
